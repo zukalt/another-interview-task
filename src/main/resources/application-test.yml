@@ -10,4 +10,5 @@ spring:
 
 logging:
     level:
-        root: info
+        root: error
+        ru.oskelly: info

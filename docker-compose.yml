@@ -1,0 +1,30 @@
+version: '2.1'
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  app:
+    build: .
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8888:8888"
+    entrypoint: java -jar app.jar
+    environment:
+      - PORT=8888
+      - RMQ_HOST=rabbitmq
+
+  app-worker:
+    build: .
+    depends_on:
+      - rabbitmq
+    entrypoint: java -Dspring.profiles.active=with-rpc-handler -jar app.jar
+    environment:
+      - RMQ_HOST=rabbitmq

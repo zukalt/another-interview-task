@@ -38,4 +38,6 @@ compileJava.dependsOn(processResources)
 
 test {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    outputs.upToDateWhen {false}
 }
