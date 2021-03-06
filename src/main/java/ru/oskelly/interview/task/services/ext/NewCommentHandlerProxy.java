@@ -15,7 +15,7 @@ public class NewCommentHandlerProxy implements NewCommentHandler {
         return CompletableFuture.supplyAsync(() -> {
             BusinessLogic.doSomeWorkOnCommentCreation();
             return id;
-        });
+        }).exceptionally(t -> {throw new CommentHandlerException("Comments handling failed", t);});
     }
 
     @Override
@@ -24,7 +24,7 @@ public class NewCommentHandlerProxy implements NewCommentHandler {
         return CompletableFuture.supplyAsync(() -> {
             BusinessLogic.doSomeWorkOnNotification();
             return id;
-        });
+        }).exceptionally(t -> {throw new CommentHandlerException("Notification delivery failed", t);});
     }
 
     public static class BusinessLogic {

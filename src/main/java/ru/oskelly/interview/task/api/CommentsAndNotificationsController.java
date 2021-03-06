@@ -1,6 +1,8 @@
 package ru.oskelly.interview.task.api;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -8,16 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import ru.oskelly.interview.task.api.dto.CommentDto;
 import ru.oskelly.interview.task.api.dto.CreateCommentDto;
 import ru.oskelly.interview.task.api.dto.NotificationDto;
-import ru.oskelly.interview.task.model.Comment;
-import ru.oskelly.interview.task.model.Notification;
 import ru.oskelly.interview.task.services.comments.CommentsService;
+import ru.oskelly.interview.task.services.ext.CommentHandlerException;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Api(tags = "Comments & Notifications")
+@ApiResponses({
+        @ApiResponse(code = 503, message = "Failed to add comment"),
+        @ApiResponse(code = 500, message = "Internal Server Error")
+})
 @Controller()
 @RequestMapping("api")
+@ResponseBody
 public class CommentsAndNotificationsController {
 
     private final CommentsService commentsService;
@@ -27,9 +33,10 @@ public class CommentsAndNotificationsController {
     }
 
     @PostMapping("comments")
+    @ResponseStatus(HttpStatus.CREATED)
     public CompletableFuture<CommentDto> postComment(@RequestBody CreateCommentDto newComment) {
-        CompletableFuture<Comment> future = commentsService.addComment(newComment.getComment());
-        return future.thenApply(CommentDto::fromEntity);
+        return commentsService.addComment(newComment.getComment())
+                .thenApply(CommentDto::fromEntity);
     }
 
     @GetMapping("comments")
@@ -37,8 +44,8 @@ public class CommentsAndNotificationsController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
-        CompletableFuture<List<Comment>> future = commentsService.listComments(page, pageSize);
-        return future.thenApply(CommentDto::fromEntities);
+        return commentsService.listComments(page, pageSize)
+                .thenApply(CommentDto::fromEntities);
     }
 
 
@@ -47,13 +54,18 @@ public class CommentsAndNotificationsController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
-        CompletableFuture<List<Notification>> future = commentsService.listNotifications(page, pageSize);
-        return future.thenApply(NotificationDto::fromEntities);
+        return commentsService.listNotifications(page, pageSize)
+                .thenApply(NotificationDto::fromEntities);
     }
 
     @ExceptionHandler
-    private ResponseEntity<String> handleExceptions(RuntimeException re) {
-        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Oops... :/");
+    private ResponseEntity<String> handleExceptions(CommentHandlerException e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<String> handleExceptions(Throwable e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 
 

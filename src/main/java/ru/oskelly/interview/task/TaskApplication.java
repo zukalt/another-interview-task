@@ -41,6 +41,7 @@ public class TaskApplication {
                 .paths(PathSelectors.any())
                 .build()
                 .genericModelSubstitutes(ResponseEntity.class, CompletableFuture.class)
+                .useDefaultResponseMessages(false)
                 .apiInfo(new ApiInfoBuilder()
                         .title("OSKELLY.ru")
                         .description("Demo API docs")
