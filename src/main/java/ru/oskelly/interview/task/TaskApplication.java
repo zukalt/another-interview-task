@@ -1,32 +1,29 @@
 package ru.oskelly.interview.task;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
 @SpringBootApplication
 @EnableSwagger2
 @EnableJpaRepositories(value = "ru.oskelly.interview.task.repositories")
 @EntityScan("ru.oskelly.interview.task.model")
+@EnableAsync
 public class TaskApplication {
 
     public static void main(String[] args) {
@@ -60,6 +57,16 @@ public class TaskApplication {
                         .addResourceLocations("classpath:/META-INF/resources/swagger-ui.html");
             }
         };
+    }
+
+    @Bean("comments.queue")
+    public Queue newComments() {
+        return new Queue("comments.new");
+    }
+
+    @Bean("notifications.queue")
+    public Queue newCommentNotifications() {
+        return new Queue("comments.notify");
     }
 
 }

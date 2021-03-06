@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "app.queue.comments",
+      "type": "java.lang.String",
+      "description": "RabbitMQ queue for dispatching new comment events."
+    },
+    {
+      "name": "app.queue.notifications",
+      "type": "java.lang.String",
+      "description": "RabbitMQ queue for dispatching new comment notifications delivery."
+    }
+  ]
+}

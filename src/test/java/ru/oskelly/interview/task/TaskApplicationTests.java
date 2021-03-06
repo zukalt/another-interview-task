@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@ActiveProfiles({"test","with-rpc-handler"})
 class TaskApplicationTests {
 
     @LocalServerPort
@@ -37,9 +37,9 @@ class TaskApplicationTests {
     private static final int COMMENTS_TO_CREATE = 1000;
 
     private String baseURL;
-    private CountDownLatch latch = new CountDownLatch(COMMENTS_TO_CREATE);
-    private AtomicInteger commentsSubmitted = new AtomicInteger(0);
-    private AtomicInteger commentsCreated = new AtomicInteger(0);
+    private final CountDownLatch latch = new CountDownLatch(COMMENTS_TO_CREATE);
+    private final AtomicInteger commentsSubmitted = new AtomicInteger(0);
+    private final AtomicInteger commentsCreated = new AtomicInteger(0);
 
     @BeforeEach
     public void setup() {
@@ -53,7 +53,7 @@ class TaskApplicationTests {
         CommentDto[] comments = listComments(1);
         final long maxId = comments.length > 0 ? comments[0].getId() : 0;
 
-        Executor executor = Executors.newFixedThreadPool(30);
+        Executor executor = Executors.newFixedThreadPool(20);
 
         IntStream.range(0,COMMENTS_TO_CREATE).forEach(i -> executor.execute( () -> {
             try {

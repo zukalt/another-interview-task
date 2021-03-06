@@ -1,3 +1,8 @@
+app:
+    queue:
+        comments: comments.new
+        notifications: comments.notify
+
 spring:
 
     datasource:
@@ -8,7 +13,7 @@ spring:
     jpa:
         hibernate:
             ddl-auto: create-drop
-        show-sql: true
+        show-sql: false
         open-in-view: false
         database-platform: org.hibernate.dialect.H2Dialect
     h2:
@@ -20,9 +25,10 @@ spring:
         port: ${RMQ_PORT:5672}
         username: ${RMQ_USERNAME:admin}
         password: ${RMQ_PASSWORD:password}
-
+        template:
+            reply-timeout: 5s
+            receive-timeout: 5s
 server:
     port: ${PORT:8080}
-
     error:
         include-stacktrace: never
