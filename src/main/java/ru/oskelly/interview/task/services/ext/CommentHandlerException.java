@@ -1,8 +1,13 @@
 package ru.oskelly.interview.task.services.ext;
 
 public class CommentHandlerException extends RuntimeException {
-
-    public CommentHandlerException(String message, Throwable cause){
+    final long commentId;
+    public CommentHandlerException(long commentId, String message, Throwable cause){
         super(message, cause);
+        this.commentId = commentId;
+    }
+
+    public long getCommentId() {
+        return commentId;
     }
 }

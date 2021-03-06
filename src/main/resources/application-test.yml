@@ -1,0 +1,22 @@
+spring:
+
+    datasource:
+        url: jdbc:h2:file:~/demo/test-data
+        driverClassName: org.h2.Driver
+        username: sa
+        password: password
+    jpa:
+        hibernate:
+            ddl-auto: create
+        show-sql: false
+        open-in-view: false
+        database-platform: org.hibernate.dialect.H2Dialect
+
+    rabbitmq:
+        host: ${RMQ_HOST:localhost}
+        port: ${RMQ_PORT:5672}
+        username: ${RMQ_USERNAME:admin}
+        password: ${RMQ_PASSWORD:password}
+logging:
+    level:
+        root: warn

@@ -14,6 +14,7 @@ import ru.oskelly.interview.task.services.comments.CommentsService;
 import ru.oskelly.interview.task.services.ext.CommentHandlerException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Api(tags = "Comments & Notifications")
@@ -41,20 +42,22 @@ public class CommentsAndNotificationsController {
 
     @GetMapping("comments")
     public CompletableFuture<List<CommentDto>> searchComments(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+            @RequestParam(value = "before", required = false) Long before,
+            @RequestParam(value = "max", required = false, defaultValue = "10") int pageSize
     ) {
-        return commentsService.listComments(page, pageSize)
+        before = Optional.ofNullable(before).orElse(Long.MAX_VALUE);
+        return commentsService.listComments(before, pageSize)
                 .thenApply(CommentDto::fromEntities);
     }
 
 
     @GetMapping("notifications")
     public CompletableFuture<List<NotificationDto>> searchNotifications(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+            @RequestParam(value = "before", required = false) Long before,
+            @RequestParam(value = "max", required = false, defaultValue = "10") int pageSize
     ) {
-        return commentsService.listNotifications(page, pageSize)
+        before = Optional.ofNullable(before).orElse(Long.MAX_VALUE);
+        return commentsService.listNotifications(before, pageSize)
                 .thenApply(NotificationDto::fromEntities);
     }
 

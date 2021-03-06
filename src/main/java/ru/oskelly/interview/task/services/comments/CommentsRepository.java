@@ -7,8 +7,8 @@ import java.util.List;
 public interface CommentsRepository {
 
     Comment addComment(Comment comment);
-    void removeComment(Comment c);
+    void removeComment(long id);
     Comment getCommentById(long id);
-    List<Comment> listComments(int page, int pageSize);
+    List<Comment> listComments(long before, int pageSize);
 
 }

@@ -15,16 +15,17 @@ public class NewCommentHandlerProxy implements NewCommentHandler {
         return CompletableFuture.supplyAsync(() -> {
             BusinessLogic.doSomeWorkOnCommentCreation();
             return id;
-        }).exceptionally(t -> {throw new CommentHandlerException("Comments handling failed", t);});
+        }).exceptionally(t -> {throw new CommentHandlerException(id, "Comments handling failed", t);});
     }
 
     @Override
     public CompletableFuture<Long> doOnNotification(Notification notification) {
-        final Long id = notification.getId();
+        final long id = notification.getId();
+        final long commentId = notification.getComment().getId();
         return CompletableFuture.supplyAsync(() -> {
             BusinessLogic.doSomeWorkOnNotification();
             return id;
-        }).exceptionally(t -> {throw new CommentHandlerException("Notification delivery failed", t);});
+        }).exceptionally(t -> {throw new NotificationDeliveryException(id, commentId, "Delivery failed", t);});
     }
 
     public static class BusinessLogic {

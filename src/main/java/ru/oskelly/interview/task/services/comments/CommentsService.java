@@ -10,7 +10,7 @@ public interface CommentsService {
 
     CompletableFuture<Comment> addComment(String comment);
 
-    CompletableFuture<List<Comment>> listComments(int page, int pageSize);
+    CompletableFuture<List<Comment>> listComments(long from, int pageSize);
 
-    CompletableFuture<List<Notification>> listNotifications(int page, int pageSize);
+    CompletableFuture<List<Notification>> listNotifications(long before, int pageSize);
 }
